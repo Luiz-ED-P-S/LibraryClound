@@ -1,0 +1,29 @@
+# Build artifacts
+**/target/
+**/bin/
+*.class
+
+# Logs
+*.log
+**/err.log
+**/out.log
+**/server.log
+**/server_err.log
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# SQLite database and temp files
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

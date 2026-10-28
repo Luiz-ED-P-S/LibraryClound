@@ -1,0 +1,570 @@
+/* ==========================================================================
+   LibraryClound - Sistema de Leitura Paginado & Temas Imersivos
+   ========================================================================== */
+
+/* Modal em Tela Cheia / Imersivo */
+.modal-reader-fullscreen {
+  max-width: 1140px;
+  width: 95vw;
+  height: 92vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 40px var(--primary-glow);
+}
+
+/* Barra Superior do Leitor */
+.reader-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.75rem;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.reader-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-width: 55%;
+}
+
+.reader-meta h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-main);
+}
+
+.reader-author {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Widget de Avaliação com Estrelas (0.5 a 5.0) */
+.rating-interaction-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--bg-subtle);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+}
+
+.rating-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.star-rating-container {
+  display: inline-flex;
+  gap: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.star-btn {
+  font-size: 1.3rem;
+  color: #cbd5e1;
+  transition: all var(--transition-fast);
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+}
+
+.star-btn.active, .star-btn.hover {
+  color: var(--gold-500);
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.star-btn.half-active::after {
+  content: '★';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  overflow: hidden;
+  color: var(--gold-500);
+}
+
+.rating-score-text {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--gold-500);
+  min-width: 55px;
+}
+
+/* Layout Interno do Leitor */
+.reader-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Painel de Conteúdo da Obra */
+.reader-content-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* Área central do texto — efeito de folha de papel elevada */
+.reader-text-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem 0;
+}
+
+/* Barra de Ferramentas do Leitor */
+.reader-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: rgba(0, 0, 0, 0.02);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Seletor de Tema de Leitura */
+.reader-theme-selector {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  border: 1px solid var(--border-subtle);
+}
+
+.theme-pill-btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.theme-pill-btn.active {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Controles de Paginação */
+.reader-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface);
+}
+
+.page-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.page-indicator-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* TEMAS ESPECÍFICOS DE LEITURA */
+
+/* Tema Claro (Papel Creme Suave) */
+.reader-content-panel.theme-light {
+  background-color: #fdfbf7;
+  color: #1c1917;
+  /* Textura sutil de papel creme */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+.reader-content-panel.theme-light .reader-toolbar,
+.reader-content-panel.theme-light .reader-pagination-bar {
+  background-color: #f7f3ea;
+  border-color: #ebe4d5;
+}
+
+/* Botões no tema Claro */
+.reader-content-panel.theme-light .btn-outline {
+  color: #1c1917;
+  border-color: #b8a98a;
+  background-color: transparent;
+}
+.reader-content-panel.theme-light .btn-outline:hover {
+  background-color: #ebe4d5;
+  border-color: #8a7a60;
+}
+.reader-content-panel.theme-light .page-input-wrapper input {
+  background-color: #fdfbf7;
+  border-color: #b8a98a;
+  color: #1c1917;
+}
+.reader-content-panel.theme-light .total-pages-span,
+.reader-content-panel.theme-light .page-indicator-text {
+  color: #433422;
+}
+
+/* Tema Sépia (Conforto Clássico) */
+.reader-content-panel.theme-sepia {
+  background-color: #f4ecd8;
+  color: #433422;
+  /* Textura de pergaminho */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.reader-content-panel.theme-sepia .reader-toolbar,
+.reader-content-panel.theme-sepia .reader-pagination-bar {
+  background-color: #ebdcb9;
+  border-color: #ded0aa;
+}
+
+/* Sombra de papel adaptada para tema sépia */
+.reader-content-panel.theme-sepia .reader-text-content {
+  background-color: rgba(253, 245, 225, 0.55);
+  box-shadow:
+    0 2px 8px rgba(100, 70, 20, 0.1),
+    0 8px 24px rgba(100, 70, 20, 0.06),
+    inset 0 1px 0 rgba(255, 240, 200, 0.8);
+}
+
+/* Botões no tema Sépia */
+.reader-content-panel.theme-sepia .btn-outline {
+  color: #433422;
+  border-color: #a8906a;
+  background-color: transparent;
+}
+.reader-content-panel.theme-sepia .btn-outline:hover {
+  background-color: #ded0aa;
+  border-color: #7a6040;
+}
+.reader-content-panel.theme-sepia .theme-pill-btn {
+  color: #6b5030;
+}
+.reader-content-panel.theme-sepia .theme-pill-btn.active {
+  background-color: #f4ecd8;
+  color: #433422;
+}
+.reader-content-panel.theme-sepia .page-input-wrapper input {
+  background-color: #f4ecd8;
+  border-color: #a8906a;
+  color: #433422;
+}
+.reader-content-panel.theme-sepia .total-pages-span,
+.reader-content-panel.theme-sepia .page-indicator-text {
+  color: #6b5030;
+}
+
+/* Tema Escuro (Noturno / OLED) */
+.reader-content-panel.theme-dark {
+  background-color: #121212;
+  color: #d1d5db;
+}
+
+.reader-content-panel.theme-dark .reader-toolbar,
+.reader-content-panel.theme-dark .reader-pagination-bar {
+  background-color: #1a1a1a;
+  border-color: #2a2a2a;
+}
+
+/* Sombra de papel adaptada para tema escuro */
+.reader-content-panel.theme-dark .reader-text-content {
+  background-color: rgba(30, 30, 30, 0.6);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Botões no tema Escuro */
+.reader-content-panel.theme-dark .btn-outline {
+  color: #d1d5db;
+  border-color: #4a4a4a;
+  background-color: transparent;
+}
+.reader-content-panel.theme-dark .btn-outline:hover {
+  background-color: #2a2a2a;
+  border-color: #888888;
+  color: #f1f5f9;
+}
+.reader-content-panel.theme-dark .theme-pill-btn {
+  color: #9ca3af;
+}
+.reader-content-panel.theme-dark .theme-pill-btn.active {
+  background-color: #2a2a2a;
+  color: #d1d5db;
+}
+.reader-content-panel.theme-dark .reader-theme-selector {
+  background-color: #1a1a1a;
+  border-color: #3a3a3a;
+}
+.reader-content-panel.theme-dark .page-input-wrapper input {
+  background-color: #1a1a1a;
+  border-color: #4a4a4a;
+  color: #d1d5db;
+}
+.reader-content-panel.theme-dark .total-pages-span,
+.reader-content-panel.theme-dark .page-indicator-text {
+  color: #9ca3af;
+}
+.reader-content-panel.theme-dark .btn-step {
+  background-color: #1a1a1a;
+  border-color: #3a3a3a;
+  color: #d1d5db;
+}
+.reader-content-panel.theme-dark .btn-step:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+}
+
+/* Texto Real do Livro */
+.reader-text-content {
+  padding: 3.5rem 5rem 4rem;
+  max-width: 860px;
+  margin: 2rem auto 1.5rem;
+  width: 100%;
+  line-height: 2;
+  font-size: 1.18rem;
+  min-height: 280px;
+  /* Efeito de papel: sombra suave que destaca a área de leitura */
+  background-color: rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+}
+
+.reader-text-content.font-serif {
+  font-family: var(--font-serif);
+}
+
+.reader-text-content.font-sans {
+  font-family: var(--font-sans);
+}
+
+.reader-text-content p {
+  margin-bottom: 1.85rem;
+  text-align: justify;
+  text-indent: 2.2rem;
+  letter-spacing: 0.015em;
+}
+
+/* Remove parágrafo vazio */
+.reader-text-content p:empty {
+  display: none;
+}
+
+.reader-page-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  margin-bottom: 2.5rem;
+  /* Separador duplo elegante estilo livro físico */
+  border-bottom: none;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reader-page-header::before,
+.reader-page-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+/* Botão de Finalização na Barra Superior (ao lado de claridade e fonte) */
+.btn-finish-toolbar {
+  background-color: #0f172a;
+  color: #ffffff;
+  border: 1px solid #1e293b;
+  border-radius: var(--radius-full);
+  padding: 0.4rem 0.95rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: 0.5rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-finish-toolbar:hover {
+  background-color: #000000;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: #000000;
+}
+
+.btn-finish-toolbar.ready-to-finish {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
+/* Temas específicos para o botão na toolbar */
+.reader-content-panel.theme-sepia .btn-finish-toolbar {
+  background-color: #3b2e20;
+  border-color: #5c4832;
+  color: #f7eed8;
+}
+
+.reader-content-panel.theme-sepia .btn-finish-toolbar:hover {
+  background-color: #211910;
+  color: #ffffff;
+}
+
+.reader-content-panel.theme-dark .btn-finish-toolbar {
+  background-color: #27272a;
+  border-color: #3f3f46;
+  color: #f4f4f5;
+}
+
+.reader-content-panel.theme-dark .btn-finish-toolbar:hover {
+  background-color: #3f3f46;
+  color: #ffffff;
+}
+
+/* Painel Lateral / Barra Lateral do Leitor */
+.reader-sidebar-panel {
+  width: 320px;
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border-subtle);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.reader-sidebar-cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* Card de Sinopse da Obra em Grande Destaque */
+.reader-synopsis-card {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-normal);
+}
+
+.reader-synopsis-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.synopsis-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.synopsis-icon {
+  font-size: 1.25rem;
+}
+
+.synopsis-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: 0.02em;
+}
+
+.synopsis-content-wrap {
+  overflow-y: auto;
+  max-height: 280px;
+  padding-right: 0.4rem;
+}
+
+.synopsis-content-wrap::-webkit-scrollbar {
+  width: 5px;
+}
+
+.synopsis-content-wrap::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 4px;
+}
+
+.reader-synopsis-card p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  text-align: justify;
+}
+
+/* Responsividade do Leitor */
+@media (max-width: 900px) {
+  .modal-reader-fullscreen {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+  .reader-sidebar-panel {
+    display: none;
+  }
+  .reader-text-content {
+    padding: 1.5rem;
+    font-size: 1rem;
+  }
+  .finish-box-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
